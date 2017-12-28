@@ -12,22 +12,27 @@ file_name = "./meta_Books"
 #如果文件存在 删除文件
 if os.access(file_name + ".txt", os.F_OK):
     os.remove(file_name + ".txt")
+if os.access(file_name + "_erro.txt", os.F_OK):
+    os.remove(file_name + "_erro.txt")
 
-filename = file_name + '.json'
 output = open(file_name + ".txt", 'a')
-with open(filename, 'rb') as f:
+output_erro = open(file_name + "_erro.txt", 'a')
+with open(file_name + ".json", 'rb') as f:
     count = 0;
     style_erro = 0;
     for line in f:
-        jsonData = ((str(line).replace('b"','').replace("b'",'')).replace('\\n"','').replace("\\n'",'')).replace('\\','');
+        #print("0 " + str(line))
+        jsonData = ((str(line).replace('b"','').replace("b'",'')).replace('\\n"','').replace("\\n'",'').replace("\\r",'')).replace('\\','');
         try:
             text = str(json.loads(jsonData))
         except:
+            #print("1 " + jsonData)
             try:
                 jsonData = jsonData.replace("'",'"').replace('"s ',"'s ");
+                #print("2 " + jsonData)
                 text = str(json.loads(jsonData))
             except:
-                #print("JSON格式存在问题")
+                output_erro.write(jsonData  + "\n")
                 style_erro = style_erro + 1
             else:
                 output.write(text  + "\n")
