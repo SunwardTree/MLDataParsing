@@ -7,7 +7,7 @@ Created on Tue Dec 26 20:12:24 2017
 import json
 import os
 
-file_name = "./reviews_Books"
+file_name = "./meta_Books"
 
 #如果文件存在 删除文件
 if os.access(file_name + ".txt", os.F_OK):
@@ -19,12 +19,18 @@ with open(filename, 'rb') as f:
     count = 0;
     style_erro = 0;
     for line in f:
-        jsonData = (((str(line).replace('b"','').replace("b'",'')).replace('\\n"','').replace("\\n'",'')).replace("'",'"').replace('"s ',"'s ")).replace('\\','');
+        jsonData = ((str(line).replace('b"','').replace("b'",'')).replace('\\n"','').replace("\\n'",'')).replace('\\','');
         try:
             text = str(json.loads(jsonData))
         except:
-            #print("JSON格式存在问题")
-            style_erro = style_erro + 1
+            try:
+                jsonData = jsonData.replace("'",'"').replace('"s ',"'s ");
+                text = str(json.loads(jsonData))
+            except:
+                #print("JSON格式存在问题")
+                style_erro = style_erro + 1
+            else:
+                output.write(text  + "\n")
         else:
             output.write(text  + "\n")
         count = count + 1
